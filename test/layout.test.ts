@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { HEADER_HEIGHT, ROW_HEIGHT, layoutSchema, rowCenterY, textCells, type Layout, type LayoutNode } from "../src/layout.js";
+import { CHAR_WIDTH, FONT_SIZE, HEADER_FONT_SIZE, HEADER_HEIGHT, PLACEHOLDER_SUFFIX, ROW_HEIGHT, layoutSchema, rowCenterY, textCells, type Layout, type LayoutNode } from "../src/layout.js";
 import { parseSchema } from "../src/parser.js";
 import { splitStatements } from "../src/split.js";
 import type { Schema } from "../src/model.js";
@@ -105,6 +105,15 @@ describe("layoutSchema — sizing and edge cases", () => {
   it("counts wide characters as two cells", () => {
     expect(textCells("abc")).toBe(3);
     expect(textCells("顧客")).toBe(4);
+  });
+
+  it("widens nodes for long names instead of truncating them", () => {
+    const headerCell = CHAR_WIDTH * (HEADER_FONT_SIZE / FONT_SIZE);
+    const long = "a_table_with_a_really_quite_long_name";
+    const t = layoutSchema(pg(`CREATE TABLE ${long} (id INT)`)).nodes[0]!;
+    expect(t.width).toBeGreaterThan(t.markerX + long.length * headerCell);
+    const ph = layoutSchema(pg("CREATE TABLE t (id INT, x INT REFERENCES organisation_settings_history (id))")).nodes.find((n) => n.placeholder)!;
+    expect(ph.width).toBeGreaterThan(ph.markerX + `${ph.label}${PLACEHOLDER_SUFFIX}`.length * headerCell);
   });
 
   it("adds a dashed placeholder for an undefined referenced table", () => {

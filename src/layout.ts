@@ -4,6 +4,10 @@ import type { Column, Schema, Table } from "./model.js";
 
 export const FONT_SIZE = 12;
 export const CHAR_WIDTH = FONT_SIZE * 0.6; // monospace estimate
+/** Table names are drawn bold at about 1.1× the row font size. */
+export const HEADER_FONT_SIZE = 13;
+/** Shown after the name of a referenced-but-undefined table; part of its width estimate. */
+export const PLACEHOLDER_SUFFIX = " (not defined)";
 export const HEADER_HEIGHT = 26;
 export const ROW_HEIGHT = 20;
 export const PAD_X = 10;
@@ -101,6 +105,11 @@ function indexColumn(columns: Column[], name: string): number {
   return exact >= 0 ? exact : columns.findIndex((c) => c.name.toLowerCase() === name.toLowerCase());
 }
 
+/** Width a header needs for its name: larger font than the rows, bold (~8% extra), padded both sides. Never truncated. */
+function headerTextWidth(text: string): number {
+  return textCells(text) * CHAR_WIDTH * (HEADER_FONT_SIZE / FONT_SIZE) * 1.08 + 2 * PAD_X;
+}
+
 /** Sizes a table node from its text; the type column is left-aligned after the longest name. */
 function sizeTable(id: string, table: Table, tableIndex: number): LayoutNode {
   const fkCols = new Set(table.foreignKeys.flatMap((fk) => fk.columns.map((c) => c.toLowerCase())));
@@ -119,8 +128,7 @@ function sizeTable(id: string, table: Table, tableIndex: number): LayoutNode {
   const nameX = markerX + (markerCells > 0 ? markerCells * CHAR_WIDTH + GAP : 0);
   const typeX = nameX + nameCells * CHAR_WIDTH + GAP;
   const rowsWidth = (typeCells > 0 ? typeX + typeCells * CHAR_WIDTH : nameX + nameCells * CHAR_WIDTH) + PAD_X;
-  // Header text is bold: allow ~8% extra.
-  const headerWidth = textCells(qualifiedName(table)) * CHAR_WIDTH * 1.08 + 2 * PAD_X;
+  const headerWidth = headerTextWidth(qualifiedName(table));
   return {
     id,
     tableIndex,
@@ -146,7 +154,7 @@ function placeholderNode(id: string, label: string): LayoutNode {
     label,
     x: 0,
     y: 0,
-    width: round(Math.max(textCells(label) * CHAR_WIDTH * 1.08 + 2 * PAD_X, 80)),
+    width: round(Math.max(headerTextWidth(label + PLACEHOLDER_SUFFIX), 80)),
     height: HEADER_HEIGHT,
     markerX: PAD_X,
     nameX: PAD_X,

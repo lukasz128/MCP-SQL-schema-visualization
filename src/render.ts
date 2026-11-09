@@ -1,5 +1,8 @@
 // Schema model + layout → one self-contained HTML page (inline CSS + inline SVG, no script).
-import { FONT_SIZE, HEADER_HEIGHT, ROW_HEIGHT, type Layout, type LayoutNode, type Point } from "./layout.js";
+// Header fill and header text always come from the same theme pair (--hdr-bg/--hdr-fg,
+// --hdrv-bg/--hdrv-fg for views), defined in both the light and the dark block; never
+// combine a fixed fill with a themed text colour.
+import { FONT_SIZE, HEADER_FONT_SIZE, HEADER_HEIGHT, PLACEHOLDER_SUFFIX, ROW_HEIGHT, type Layout, type LayoutNode, type Point } from "./layout.js";
 import type { Column, Dialect, Schema, Table } from "./model.js";
 
 export interface RenderMeta {
@@ -20,12 +23,12 @@ const n = (v: number): string => String(Math.round(v * 10) / 10);
 const BASELINE = FONT_SIZE * 0.35; // vertical offset from a row's center to the text baseline
 const CORNER = 4;
 
-const CSS = `:root{--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#c9d1d9;--head:#e8eef6;--headv:#efe9f8;--edge:#6e7781;--key:#9a6700;--card:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--line:#3d444d;--head:#1c2633;--headv:#2a2238;--edge:#8b949e;--key:#d29922;--card:#151b23}}
+const CSS = `:root{color-scheme:light dark;--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#c9d1d9;--hdr-bg:#e8eef6;--hdr-fg:#1f2328;--hdrv-bg:#efe9f8;--hdrv-fg:#1f2328;--edge:#6e7781;--key:#9a6700;--card:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--line:#3d444d;--hdr-bg:#1c2633;--hdr-fg:#e6edf3;--hdrv-bg:#2a2238;--hdrv-fg:#e6edf3;--edge:#8b949e;--key:#d29922;--card:#151b23}}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
 h1{font-size:18px;margin:0 0 2px}header p,footer{margin:0;color:var(--muted);font-size:13px}main{margin:12px 0;overflow:auto}
 svg{display:block;max-width:100%;height:auto}svg text{font:${FONT_SIZE}px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:var(--fg)}
-.c{fill:var(--card);stroke:none}.o{fill:none;stroke:var(--line)}.h{fill:var(--head)}.v .h{fill:var(--headv)}.hn{font-weight:600}
+.c{fill:var(--card);stroke:none}.o{fill:none;stroke:var(--line)}.h{fill:var(--hdr-bg)}.v .h{fill:var(--hdrv-bg)}.hn{fill:var(--hdr-fg);font-size:${HEADER_FONT_SIZE}px;font-weight:700;dominant-baseline:middle}.v .hn{fill:var(--hdrv-fg)}
 .k{fill:var(--key);font-size:10px;font-weight:600}.ty{fill:var(--muted)}.nl{opacity:.62}.pk{font-weight:600}
 .p .o{stroke-dasharray:4 3}.p .hn{font-style:italic;font-weight:400;fill:var(--muted)}
 .e{fill:none;stroke:var(--edge);stroke-width:1.25}.ev{stroke-dasharray:2 3;opacity:.8}.m{fill:var(--edge)}
@@ -84,12 +87,12 @@ function renderNode(node: LayoutNode, table: Table | undefined): string {
   const headerPath = node.placeholder
     ? ""
     : `<path class="h" d="M0,${HEADER_HEIGHT}V${CORNER}Q0,0 ${CORNER},0H${n(node.width - CORNER)}Q${w},0 ${w},${CORNER}V${HEADER_HEIGHT}Z"/>`;
-  const label = node.placeholder ? `${node.label} (not defined)` : node.label;
+  const label = node.placeholder ? `${node.label}${PLACEHOLDER_SUFFIX}` : node.label;
   let out =
     `<g class="${cls}" transform="translate(${n(node.x)},${n(node.y)})">` +
     `<title>${escape(node.placeholder ? `${node.label}: referenced but not defined in this DDL` : `${node.kind === "view" ? "view" : "table"} ${node.label}`)}</title>` +
     `<rect class="c" width="${w}" height="${n(node.height)}" rx="${CORNER}"/>${headerPath}` +
-    `<text class="hn" x="${n(node.markerX)}" y="${n(HEADER_HEIGHT / 2 + BASELINE)}">${escape(label)}</text>`;
+    `<text class="hn" x="${n(node.markerX)}" y="${n(HEADER_HEIGHT / 2)}">${escape(label)}</text>`;
 
   if (table) {
     table.columns.forEach((c, i) => {
