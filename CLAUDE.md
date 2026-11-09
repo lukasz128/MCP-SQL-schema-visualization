@@ -4,8 +4,11 @@
 An MCP server that takes SQL DDL — either a path to a `.sql` file or a raw SQL string — and returns a self-contained HTML page visualizing the schema (tables, columns, keys and the relationships between tables).
 
 ## Current state
-- `src/index.ts` is still the MCP "weather" tutorial boilerplate (`get-alerts` tool, NWS API). It is a placeholder to be replaced with the schema-visualization tool.
-- No build/start scripts yet in `package.json`.
+- **M1 (walking skeleton) done:** `visualize-sql-schema` works end-to-end for PostgreSQL with `dialect` given. Plan: project doc `claude/implementation-plan.md`.
+- Modules: `index.ts` (SDK only) → `tool.ts` (`runVisualize`) → `input.ts` → `split.ts` → `parser.ts` → `layout.ts` → `render.ts`; `model.ts` types, `errors.ts` `SchemaError`.
+- Not yet: `dialect.ts` (Phase 5). An omitted `dialect` currently falls back to PostgreSQL ("Parsed as PostgreSQL (default)").
+- Scripts: `npm start`, `npm test` (vitest), `npm run typecheck`, `npm run spike:ast` (rewrites `test/ast-samples/`).
+- Known parser gaps (node-sql-parser 5.4, PostgreSQL): `GENERATED ... AS IDENTITY` columns and `REFERENCES t` without a column list make the whole statement fail → it becomes a warning. Candidates for Phase 6.
 
 ## Stack
 - TypeScript, ESM (`"type": "module"`), run with `tsx`

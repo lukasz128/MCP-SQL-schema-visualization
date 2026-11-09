@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Database schema</title>
+    <style>
+      :root {
+        --bg: #fff;
+        --fg: #1f2328;
+        --muted: #656d76;
+        --line: #c9d1d9;
+        --head: #e8eef6;
+        --headv: #efe9f8;
+        --edge: #6e7781;
+        --key: #9a6700;
+        --card: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --fg: #e6edf3;
+          --muted: #8b949e;
+          --line: #3d444d;
+          --head: #1c2633;
+          --headv: #2a2238;
+          --edge: #8b949e;
+          --key: #d29922;
+          --card: #151b23;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          14px/1.45 system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 0 2px;
+      }
+      header p,
+      footer {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      main {
+        margin: 12px 0;
+        overflow: auto;
+      }
+      svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      svg text {
+        font:
+          12px ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Consolas,
+          monospace;
+        fill: var(--fg);
+      }
+      .c {
+        fill: var(--card);
+        stroke: none;
+      }
+      .o {
+        fill: none;
+        stroke: var(--line);
+      }
+      .h {
+        fill: var(--head);
+      }
+      .v .h {
+        fill: var(--headv);
+      }
+      .hn {
+        font-weight: 600;
+      }
+      .k {
+        fill: var(--key);
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .ty {
+        fill: var(--muted);
+      }
+      .nl {
+        opacity: 0.62;
+      }
+      .pk {
+        font-weight: 600;
+      }
+      .p .o {
+        stroke-dasharray: 4 3;
+      }
+      .p .hn {
+        font-style: italic;
+        font-weight: 400;
+        fill: var(--muted);
+      }
+      .e {
+        fill: none;
+        stroke: var(--edge);
+        stroke-width: 1.25;
+      }
+      .ev {
+        stroke-dasharray: 2 3;
+        opacity: 0.8;
+      }
+      .m {
+        fill: var(--edge);
+      }
+      details {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+      }
+      details ul {
+        margin: 6px 0;
+        padding-left: 20px;
+      }
+      code {
+        font:
+          12px ui-monospace,
+          Menlo,
+          Consolas,
+          monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Database schema</h1>
+      <p>6 tables · 3 foreign keys · Parsed as PostgreSQL (default)</p>
+    </header>
+    <main>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1036 681"
+        width="1036"
+        height="681"
+        role="img"
+        aria-label="Schema diagram: 6 tables, 3 foreign keys"
+      >
+        <defs>
+          <marker
+            id="a"
+            viewBox="0 0 8 8"
+            refX="8"
+            refY="4"
+            markerWidth="8"
+            markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+          >
+            <path class="m" d="M0,0L8,4L0,8z" />
+          </marker>
+        </defs>
+        <path
+          class="e"
+          d="M389.2,408L375.2,408C335.2,408 335.2,428 295.2,428L281.2,428"
+          marker-end="url(#a)"
+        />
+        <path
+          class="e"
+          d="M758.4,551L744.4,551C713.4,551 713.4,368 682.4,368L668.4,368"
+          marker-end="url(#a)"
+        />
+        <path
+          class="e"
+          d="M765.6,345L751.6,345C717,345 717,368 682.4,368L668.4,368"
+          marker-end="url(#a)"
+        />
+        <g class="t" transform="translate(20,20)">
+          <title>table vehicles</title>
+          <rect class="c" width="279.2" height="126" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H275.2Q279.2,0 279.2,4V26Z" />
+          <text class="hn" x="10" y="17.2">vehicles</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="182.8">INT</tspan>
+          </text>
+          <text class="nl" y="60.2">
+            <title>make VARCHAR(50)</title>
+            <tspan x="38.8">make</tspan>
+            <tspan class="ty" x="182.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="80.2">
+            <title>model VARCHAR(50)</title>
+            <tspan x="38.8">model</tspan>
+            <tspan class="ty" x="182.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="100.2">
+            <title>year INT</title>
+            <tspan x="38.8">year</tspan>
+            <tspan class="ty" x="182.8">INT</tspan>
+          </text>
+          <text class="nl" y="120.2">
+            <title>fuel_tank_capacity DECIMAL(5,1)</title>
+            <tspan x="38.8">fuel_tank_capacity</tspan>
+            <tspan class="ty" x="182.8">DECIMAL(5,1)</tspan>
+          </text>
+          <rect class="o" width="279.2" height="126" rx="4" />
+        </g>
+        <g class="t" transform="translate(38,186)">
+          <title>table drivers</title>
+          <rect class="c" width="243.2" height="166" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H239.2Q243.2,0 243.2,4V26Z" />
+          <text class="hn" x="10" y="17.2">drivers</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="146.8">INT</tspan>
+          </text>
+          <text class="nl" y="60.2">
+            <title>first_name VARCHAR(50)</title>
+            <tspan x="38.8">first_name</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="80.2">
+            <title>last_name VARCHAR(50)</title>
+            <tspan x="38.8">last_name</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="100.2">
+            <title>email VARCHAR(100)</title>
+            <tspan x="38.8">email</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(100)</tspan>
+          </text>
+          <text class="nl" y="120.2">
+            <title>phone VARCHAR(20)</title>
+            <tspan x="38.8">phone</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(20)</tspan>
+          </text>
+          <text class="nl" y="140.2">
+            <title>contract_type VARCHAR(20)</title>
+            <tspan x="38.8">contract_type</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(20)</tspan>
+          </text>
+          <text class="nl" y="160.2">
+            <title>status VARCHAR(20)</title>
+            <tspan x="38.8">status</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(20)</tspan>
+          </text>
+          <rect class="o" width="243.2" height="166" rx="4" />
+        </g>
+        <g class="t" transform="translate(38,392)">
+          <title>table customers</title>
+          <rect class="c" width="243.2" height="166" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H239.2Q243.2,0 243.2,4V26Z" />
+          <text class="hn" x="10" y="17.2">customers</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="146.8">INT</tspan>
+          </text>
+          <text class="nl" y="60.2">
+            <title>first_name VARCHAR(50)</title>
+            <tspan x="38.8">first_name</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="80.2">
+            <title>last_name VARCHAR(50)</title>
+            <tspan x="38.8">last_name</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="100.2">
+            <title>email VARCHAR(100)</title>
+            <tspan x="38.8">email</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(100)</tspan>
+          </text>
+          <text class="nl" y="120.2">
+            <title>phone VARCHAR(20)</title>
+            <tspan x="38.8">phone</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(20)</tspan>
+          </text>
+          <text class="nl" y="140.2">
+            <title>customer_type VARCHAR(20)</title>
+            <tspan x="38.8">customer_type</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(20)</tspan>
+          </text>
+          <text class="nl" y="160.2">
+            <title>address VARCHAR(255)</title>
+            <tspan x="38.8">address</tspan>
+            <tspan class="ty" x="146.8">VARCHAR(255)</tspan>
+          </text>
+          <rect class="o" width="243.2" height="166" rx="4" />
+        </g>
+        <g class="t" transform="translate(389.2,332)">
+          <title>table transportation_orders</title>
+          <rect class="c" width="279.2" height="286" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H275.2Q279.2,0 279.2,4V26Z" />
+          <text class="hn" x="10" y="17.2">transportation_orders</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="175.6">INT</tspan>
+          </text>
+          <text y="60.2">
+            <title>order_number VARCHAR(20) NOT NULL</title>
+            <tspan class="k" x="10">UQ</tspan>
+            <tspan x="38.8">order_number</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(20)</tspan>
+          </text>
+          <text y="80.2">
+            <title>customer_id INT NOT NULL</title>
+            <tspan class="k" x="10">FK</tspan>
+            <tspan x="38.8">customer_id</tspan>
+            <tspan class="ty" x="175.6">INT</tspan>
+          </text>
+          <text y="100.2">
+            <title>status VARCHAR(20) NOT NULL</title>
+            <tspan x="38.8">status</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(20)</tspan>
+          </text>
+          <text y="120.2">
+            <title>amount DECIMAL(10,2) NOT NULL</title>
+            <tspan x="38.8">amount</tspan>
+            <tspan class="ty" x="175.6">DECIMAL(10,2)</tspan>
+          </text>
+          <text y="140.2">
+            <title>order_date TIMESTAMP NOT NULL</title>
+            <tspan x="38.8">order_date</tspan>
+            <tspan class="ty" x="175.6">TIMESTAMP</tspan>
+          </text>
+          <text class="nl" y="160.2">
+            <title>expected_delivery DATE</title>
+            <tspan x="38.8">expected_delivery</tspan>
+            <tspan class="ty" x="175.6">DATE</tspan>
+          </text>
+          <text class="nl" y="180.2">
+            <title>shipping_address VARCHAR(255)</title>
+            <tspan x="38.8">shipping_address</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(255)</tspan>
+          </text>
+          <text class="nl" y="200.2">
+            <title>shipping_city VARCHAR(100)</title>
+            <tspan x="38.8">shipping_city</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(100)</tspan>
+          </text>
+          <text class="nl" y="220.2">
+            <title>shipping_state VARCHAR(50)</title>
+            <tspan x="38.8">shipping_state</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="240.2">
+            <title>shipping_zip_code VARCHAR(20)</title>
+            <tspan x="38.8">shipping_zip_code</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(20)</tspan>
+          </text>
+          <text class="nl" y="260.2">
+            <title>shipping_method VARCHAR(50)</title>
+            <tspan x="38.8">shipping_method</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(50)</tspan>
+          </text>
+          <text class="nl" y="280.2">
+            <title>tracking_number VARCHAR(50)</title>
+            <tspan x="38.8">tracking_number</tspan>
+            <tspan class="ty" x="175.6">VARCHAR(50)</tspan>
+          </text>
+          <rect class="o" width="279.2" height="286" rx="4" />
+        </g>
+        <g class="t" transform="translate(758.4,495)">
+          <title>table order_timeline_events</title>
+          <rect class="c" width="257.6" height="166" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H253.6Q257.6,0 257.6,4V26Z" />
+          <text class="hn" x="10" y="17.2">order_timeline_events</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="161.2">INT</tspan>
+          </text>
+          <text y="60.2">
+            <title>order_id INT NOT NULL</title>
+            <tspan class="k" x="10">FK</tspan>
+            <tspan x="38.8">order_id</tspan>
+            <tspan class="ty" x="161.2">INT</tspan>
+          </text>
+          <text y="80.2">
+            <title>event_type VARCHAR(50) NOT NULL</title>
+            <tspan x="38.8">event_type</tspan>
+            <tspan class="ty" x="161.2">VARCHAR(50)</tspan>
+          </text>
+          <text y="100.2">
+            <title>event_timestamp TIMESTAMP NOT NULL</title>
+            <tspan x="38.8">event_timestamp</tspan>
+            <tspan class="ty" x="161.2">TIMESTAMP</tspan>
+          </text>
+          <text class="nl" y="120.2">
+            <title>title VARCHAR(100)</title>
+            <tspan x="38.8">title</tspan>
+            <tspan class="ty" x="161.2">VARCHAR(100)</tspan>
+          </text>
+          <text class="nl" y="140.2">
+            <title>description TEXT</title>
+            <tspan x="38.8">description</tspan>
+            <tspan class="ty" x="161.2">TEXT</tspan>
+          </text>
+          <text class="nl" y="160.2">
+            <title>executed_by VARCHAR(100)</title>
+            <tspan x="38.8">executed_by</tspan>
+            <tspan class="ty" x="161.2">VARCHAR(100)</tspan>
+          </text>
+          <rect class="o" width="257.6" height="166" rx="4" />
+        </g>
+        <g class="t" transform="translate(765.6,289)">
+          <title>table order_items</title>
+          <rect class="c" width="243.2" height="166" rx="4" />
+          <path class="h" d="M0,26V4Q0,0 4,0H239.2Q243.2,0 243.2,4V26Z" />
+          <text class="hn" x="10" y="17.2">order_items</text>
+          <text y="40.2">
+            <title>id INT</title>
+            <tspan class="k" x="10">PK</tspan>
+            <tspan class="pk" x="38.8">id</tspan>
+            <tspan class="ty" x="139.6">INT</tspan>
+          </text>
+          <text y="60.2">
+            <title>order_id INT NOT NULL</title>
+            <tspan class="k" x="10">FK</tspan>
+            <tspan x="38.8">order_id</tspan>
+            <tspan class="ty" x="139.6">INT</tspan>
+          </text>
+          <text y="80.2">
+            <title>product_name VARCHAR(100) NOT NULL</title>
+            <tspan x="38.8">product_name</tspan>
+            <tspan class="ty" x="139.6">VARCHAR(100)</tspan>
+          </text>
+          <text y="100.2">
+            <title>quantity INT NOT NULL DEFAULT 1</title>
+            <tspan x="38.8">quantity</tspan>
+            <tspan class="ty" x="139.6">INT</tspan>
+          </text>
+          <text y="120.2">
+            <title>unit_price DECIMAL(10,2) NOT NULL</title>
+            <tspan x="38.8">unit_price</tspan>
+            <tspan class="ty" x="139.6">DECIMAL(10,2)</tspan>
+          </text>
+          <text y="140.2">
+            <title>total_price DECIMAL(10,2) NOT NULL</title>
+            <tspan x="38.8">total_price</tspan>
+            <tspan class="ty" x="139.6">DECIMAL(10,2)</tspan>
+          </text>
+          <text y="160.2">
+            <title>item_type VARCHAR(20) NOT NULL</title>
+            <tspan x="38.8">item_type</tspan>
+            <tspan class="ty" x="139.6">VARCHAR(20)</tspan>
+          </text>
+          <rect class="o" width="243.2" height="166" rx="4" />
+        </g>
+      </svg>
+    </main>
+    <footer>
+      PK primary key · FK foreign key · UQ unique · faded rows are nullable
+    </footer>
+  </body>
+</html>

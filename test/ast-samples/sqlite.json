@@ -1,0 +1,146 @@
+[
+  {
+    "sql": "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL UNIQUE)",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "users"
+        }
+      ],
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "id"
+          },
+          "definition": {
+            "dataType": "INTEGER",
+            "suffix": []
+          },
+          "resource": "column",
+          "primary_key": "primary key",
+          "auto_increment": "autoincrement"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "email"
+          },
+          "definition": {
+            "dataType": "TEXT"
+          },
+          "resource": "column",
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          },
+          "unique": "unique"
+        }
+      ],
+      "table_options": null
+    }
+  },
+  {
+    "sql": "CREATE TABLE posts (id INTEGER PRIMARY KEY, user_id INTEGER REFERENCES users(id), FOREIGN KEY (user_id) REFERENCES users(id))",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "posts"
+        }
+      ],
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "id"
+          },
+          "definition": {
+            "dataType": "INTEGER",
+            "suffix": []
+          },
+          "resource": "column",
+          "primary_key": "primary key"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "user_id"
+          },
+          "definition": {
+            "dataType": "INTEGER",
+            "suffix": []
+          },
+          "resource": "column",
+          "reference_definition": {
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": "id",
+                "collate": null
+              }
+            ],
+            "table": [
+              {
+                "db": null,
+                "table": "users"
+              }
+            ],
+            "keyword": "references",
+            "match": null,
+            "on_action": []
+          }
+        },
+        {
+          "constraint": null,
+          "definition": [
+            {
+              "type": "column_ref",
+              "table": null,
+              "column": "user_id",
+              "collate": null
+            }
+          ],
+          "constraint_type": "FOREIGN KEY",
+          "keyword": null,
+          "index": null,
+          "resource": "constraint",
+          "reference_definition": {
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": "id",
+                "collate": null
+              }
+            ],
+            "table": [
+              {
+                "db": null,
+                "table": "users"
+              }
+            ],
+            "keyword": "references",
+            "match": null,
+            "on_action": []
+          }
+        }
+      ],
+      "table_options": null
+    }
+  }
+]

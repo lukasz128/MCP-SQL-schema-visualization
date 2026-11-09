@@ -1,0 +1,345 @@
+{
+  "tables": [
+    {
+      "name": "customers",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "id",
+          "type": "SERIAL",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "unique": true,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "full_name",
+          "type": "TEXT",
+          "nullable": true,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMPTZ",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false,
+          "default": "now()"
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "foreignKeys": [],
+      "schema": "public"
+    },
+    {
+      "name": "categories",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "parent_id",
+          "type": "INTEGER",
+          "nullable": true,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "foreignKeys": [
+        {
+          "columns": [
+            "parent_id"
+          ],
+          "refTable": "categories",
+          "refColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "category_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "sku",
+          "type": "VARCHAR(32)",
+          "nullable": false,
+          "unique": true,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "price",
+          "type": "NUMERIC(10,2)",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false,
+          "default": "0"
+        },
+        {
+          "name": "tags",
+          "type": "TEXT[]",
+          "nullable": true,
+          "unique": false,
+          "isPrimaryKey": false
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "foreignKeys": [
+        {
+          "columns": [
+            "category_id"
+          ],
+          "refTable": "categories",
+          "refColumns": [
+            "id"
+          ],
+          "name": "products_category_fk"
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "id",
+          "type": "BIGSERIAL",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(16)",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false,
+          "default": "'new'"
+        },
+        {
+          "name": "note",
+          "type": "TEXT",
+          "nullable": true,
+          "unique": false,
+          "isPrimaryKey": false
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "foreignKeys": [
+        {
+          "columns": [
+            "customer_id"
+          ],
+          "refTable": "customers",
+          "refColumns": [
+            "id"
+          ],
+          "refSchema": "public",
+          "name": "orders_customer_fk"
+        }
+      ]
+    },
+    {
+      "name": "order_items",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "line_no",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false,
+          "default": "1"
+        }
+      ],
+      "primaryKey": [
+        "order_id",
+        "line_no"
+      ],
+      "foreignKeys": [
+        {
+          "columns": [
+            "order_id"
+          ],
+          "refTable": "orders",
+          "refColumns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "product_id"
+          ],
+          "refTable": "products",
+          "refColumns": [
+            "id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "shipments",
+      "kind": "table",
+      "columns": [
+        {
+          "name": "id",
+          "type": "SERIAL",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": true
+        },
+        {
+          "name": "order_id",
+          "type": "BIGINT",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "line_no",
+          "type": "INTEGER",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "shipped",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "unique": false,
+          "isPrimaryKey": false,
+          "default": "FALSE"
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "foreignKeys": [
+        {
+          "columns": [
+            "order_id",
+            "line_no"
+          ],
+          "refTable": "order_items",
+          "refColumns": [
+            "order_id",
+            "line_no"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "order_totals",
+      "kind": "view",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "o.id",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "email",
+          "type": "c.email",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        },
+        {
+          "name": "total",
+          "type": "SUM(i.quantity * p.price)",
+          "nullable": false,
+          "unique": false,
+          "isPrimaryKey": false
+        }
+      ],
+      "primaryKey": [],
+      "foreignKeys": [],
+      "sources": [
+        "orders",
+        "public.customers",
+        "order_items",
+        "products"
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "message": "Skipped `CREATE TABLE audit_log (` (unexpected \"A\").",
+      "line": 71,
+      "column": 30
+    }
+  ]
+}

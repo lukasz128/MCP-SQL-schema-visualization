@@ -1,0 +1,79 @@
+[
+  {
+    "sql": "CREATE TABLE dbo.users (id INT IDENTITY(1,1) PRIMARY KEY, email NVARCHAR(255) NOT NULL UNIQUE)",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": "dbo",
+          "table": "users",
+          "as": null,
+          "table_hint": null,
+          "temporal_table": null
+        }
+      ],
+      "ignore_replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "db": null,
+            "schema": null,
+            "column": "id",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column",
+          "auto_increment": {
+            "keyword": "identity",
+            "seed": {
+              "type": "number",
+              "value": 1
+            },
+            "increment": {
+              "type": "number",
+              "value": 1
+            },
+            "parentheses": true
+          },
+          "primary_key": "primary key"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "db": null,
+            "schema": null,
+            "column": "email",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "NVARCHAR",
+            "length": 255,
+            "parentheses": true
+          },
+          "resource": "column",
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          },
+          "unique": "unique"
+        }
+      ],
+      "table_options": null
+    }
+  },
+  {
+    "sql": "CREATE TABLE posts (id INT, user_id INT, CONSTRAINT pk_posts PRIMARY KEY (id), CONSTRAINT fk_u FOREIGN KEY (user_id) REFERENCES users(id))",
+    "error": "Expected \"'\", \"(\", \",\", \"--\", \"/*\", \"AS\", \"CROSS\", \"FULL\", \"INNER\", \"JOIN\", \"LEFT\", \"ON\", \"OUTER\", \"OVER\", \"RIGHT\", \"UNION\", \"WITHIN\", \"[\", \"\\\"\", \"`\", [ \\t\\n\\r], or [A-Za-z_@#一-龥] but \")\" found."
+  }
+]

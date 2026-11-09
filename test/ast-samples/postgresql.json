@@ -1,0 +1,503 @@
+[
+  {
+    "sql": "CREATE TABLE public.users (id SERIAL PRIMARY KEY, email VARCHAR(255) NOT NULL UNIQUE, created_at TIMESTAMP DEFAULT now(), score NUMERIC(10,2))",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "unlogged": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": "public",
+          "table": "users",
+          "as": null
+        }
+      ],
+      "ignore_replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "id"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "SERIAL",
+            "suffix": []
+          },
+          "resource": "column",
+          "primary_key": "primary key"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "email"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "VARCHAR",
+            "length": 255,
+            "parentheses": true
+          },
+          "resource": "column",
+          "default_val": null,
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          },
+          "unique": "unique"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "created_at"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "TIMESTAMP"
+          },
+          "resource": "column",
+          "default_val": {
+            "type": "default",
+            "value": {
+              "type": "function",
+              "name": {
+                "name": [
+                  {
+                    "type": "default",
+                    "value": "now"
+                  }
+                ]
+              },
+              "args": {
+                "type": "expr_list",
+                "value": []
+              }
+            }
+          },
+          "nullable": null
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "score"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "NUMERIC",
+            "length": 10,
+            "scale": 2,
+            "parentheses": true,
+            "suffix": []
+          },
+          "resource": "column"
+        }
+      ],
+      "table_options": null
+    }
+  },
+  {
+    "sql": "CREATE TABLE posts (id INT, user_id INT NOT NULL REFERENCES users(id), title TEXT, PRIMARY KEY (id), UNIQUE (title), CONSTRAINT fk_u FOREIGN KEY (user_id) REFERENCES users (id))",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "unlogged": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "posts",
+          "as": null
+        }
+      ],
+      "ignore_replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "id"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "user_id"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column",
+          "default_val": null,
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          },
+          "reference_definition": {
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": {
+                  "expr": {
+                    "type": "default",
+                    "value": "id"
+                  }
+                },
+                "collate": null
+              }
+            ],
+            "table": [
+              {
+                "db": null,
+                "table": "users"
+              }
+            ],
+            "keyword": "references",
+            "match": null,
+            "on_action": []
+          }
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "title"
+              }
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "TEXT"
+          },
+          "resource": "column"
+        },
+        {
+          "constraint": null,
+          "definition": [
+            {
+              "type": "column_ref",
+              "table": null,
+              "column": {
+                "expr": {
+                  "type": "default",
+                  "value": "id"
+                }
+              },
+              "collate": null
+            }
+          ],
+          "constraint_type": "primary key",
+          "keyword": null,
+          "index_type": null,
+          "resource": "constraint",
+          "index_options": null
+        },
+        {
+          "constraint": null,
+          "definition": [
+            {
+              "type": "column_ref",
+              "table": null,
+              "column": {
+                "expr": {
+                  "type": "default",
+                  "value": "title"
+                }
+              },
+              "collate": null
+            }
+          ],
+          "constraint_type": "unique",
+          "keyword": null,
+          "index_type": null,
+          "index": null,
+          "resource": "constraint",
+          "index_options": null
+        },
+        {
+          "constraint": "fk_u",
+          "definition": [
+            {
+              "type": "column_ref",
+              "table": null,
+              "column": {
+                "expr": {
+                  "type": "default",
+                  "value": "user_id"
+                }
+              },
+              "collate": null
+            }
+          ],
+          "constraint_type": "FOREIGN KEY",
+          "keyword": "constraint",
+          "index": null,
+          "resource": "constraint",
+          "reference_definition": {
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": {
+                  "expr": {
+                    "type": "default",
+                    "value": "id"
+                  }
+                },
+                "collate": null
+              }
+            ],
+            "table": [
+              {
+                "db": null,
+                "table": "users"
+              }
+            ],
+            "keyword": "references",
+            "match": null,
+            "on_action": []
+          }
+        }
+      ],
+      "table_options": null
+    }
+  },
+  {
+    "sql": "ALTER TABLE posts ADD CONSTRAINT fk_x FOREIGN KEY (user_id) REFERENCES users (id)",
+    "ast": {
+      "type": "alter",
+      "keyword": "table",
+      "if_exists": null,
+      "prefix": null,
+      "table": [
+        {
+          "db": null,
+          "table": "posts"
+        }
+      ],
+      "expr": [
+        {
+          "action": "add",
+          "create_definitions": {
+            "constraint": "fk_x",
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": {
+                  "expr": {
+                    "type": "default",
+                    "value": "user_id"
+                  }
+                },
+                "collate": null
+              }
+            ],
+            "constraint_type": "FOREIGN KEY",
+            "keyword": "constraint",
+            "index": null,
+            "resource": "constraint",
+            "reference_definition": {
+              "definition": [
+                {
+                  "type": "column_ref",
+                  "table": null,
+                  "column": {
+                    "expr": {
+                      "type": "default",
+                      "value": "id"
+                    }
+                  },
+                  "collate": null
+                }
+              ],
+              "table": [
+                {
+                  "db": null,
+                  "table": "users"
+                }
+              ],
+              "keyword": "references",
+              "match": null,
+              "on_action": []
+            }
+          },
+          "resource": "constraint",
+          "type": "alter"
+        }
+      ]
+    }
+  },
+  {
+    "sql": "CREATE VIEW v AS SELECT u.id, u.email AS mail, p.* FROM users u JOIN posts p ON p.user_id = u.id",
+    "ast": {
+      "type": "create",
+      "keyword": "view",
+      "replace": null,
+      "temporary": null,
+      "recursive": null,
+      "columns": null,
+      "select": {
+        "with": null,
+        "type": "select",
+        "options": null,
+        "distinct": {
+          "type": null
+        },
+        "columns": [
+          {
+            "type": "expr",
+            "expr": {
+              "type": "column_ref",
+              "table": "u",
+              "column": {
+                "expr": {
+                  "type": "default",
+                  "value": "id"
+                }
+              },
+              "collate": null
+            },
+            "as": null
+          },
+          {
+            "type": "expr",
+            "expr": {
+              "type": "column_ref",
+              "table": "u",
+              "column": {
+                "expr": {
+                  "type": "default",
+                  "value": "email"
+                }
+              },
+              "collate": null
+            },
+            "as": "mail"
+          },
+          {
+            "expr": {
+              "type": "column_ref",
+              "table": {
+                "type": "default",
+                "value": "p"
+              },
+              "column": "*"
+            },
+            "as": null
+          }
+        ],
+        "into": {
+          "position": null
+        },
+        "from": [
+          {
+            "db": null,
+            "table": "users",
+            "as": "u"
+          },
+          {
+            "db": null,
+            "table": "posts",
+            "as": "p",
+            "join": "INNER JOIN",
+            "on": {
+              "type": "binary_expr",
+              "operator": "=",
+              "left": {
+                "type": "column_ref",
+                "table": "p",
+                "column": {
+                  "expr": {
+                    "type": "default",
+                    "value": "user_id"
+                  }
+                },
+                "collate": null
+              },
+              "right": {
+                "type": "column_ref",
+                "table": "u",
+                "column": {
+                  "expr": {
+                    "type": "default",
+                    "value": "id"
+                  }
+                },
+                "collate": null
+              }
+            }
+          }
+        ],
+        "where": null,
+        "groupby": null,
+        "having": null,
+        "orderby": null,
+        "limit": {
+          "seperator": "",
+          "value": []
+        },
+        "window": null
+      },
+      "view": {
+        "db": null,
+        "view": "v"
+      },
+      "with_options": null,
+      "with": null
+    }
+  }
+]

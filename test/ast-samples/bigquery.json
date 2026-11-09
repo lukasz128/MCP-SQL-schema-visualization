@@ -1,0 +1,93 @@
+[
+  {
+    "sql": "CREATE TABLE `proj.ds.users` (id INT64 NOT NULL, email STRING, tags ARRAY<STRING>)",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "proj.ds.users",
+          "surround": {
+            "table": "`"
+          }
+        }
+      ],
+      "replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "id"
+              },
+              "offset": []
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT64"
+          },
+          "resource": "column",
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          }
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "email"
+              },
+              "offset": []
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "STRING"
+          },
+          "resource": "column"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": {
+              "expr": {
+                "type": "default",
+                "value": "tags"
+              },
+              "offset": []
+            },
+            "collate": null
+          },
+          "definition": {
+            "dataType": "ARRAY",
+            "definition": [
+              {
+                "field_name": null,
+                "field_type": {
+                  "dataType": "STRING"
+                }
+              }
+            ],
+            "anglebracket": true
+          },
+          "resource": "column"
+        }
+      ],
+      "table_options": null
+    }
+  }
+]

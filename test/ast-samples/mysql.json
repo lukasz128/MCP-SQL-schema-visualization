@@ -1,0 +1,215 @@
+[
+  {
+    "sql": "CREATE TABLE `users` (`id` INT AUTO_INCREMENT PRIMARY KEY, `email` VARCHAR(255) NOT NULL UNIQUE) ENGINE=InnoDB",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "users"
+        }
+      ],
+      "ignore_replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "id",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column",
+          "auto_increment": "auto_increment",
+          "primary_key": "primary key"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "email",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "VARCHAR",
+            "length": 255,
+            "parentheses": true,
+            "suffix": null
+          },
+          "resource": "column",
+          "nullable": {
+            "type": "not null",
+            "value": "not null"
+          },
+          "unique": "unique"
+        }
+      ],
+      "table_options": [
+        {
+          "keyword": "engine",
+          "symbol": "=",
+          "value": "INNODB"
+        }
+      ]
+    }
+  },
+  {
+    "sql": "CREATE TABLE posts (id INT, user_id INT, PRIMARY KEY (id), FOREIGN KEY (user_id) REFERENCES users(id))",
+    "ast": {
+      "type": "create",
+      "keyword": "table",
+      "temporary": null,
+      "if_not_exists": null,
+      "table": [
+        {
+          "db": null,
+          "table": "posts"
+        }
+      ],
+      "ignore_replace": null,
+      "as": null,
+      "query_expr": null,
+      "create_definitions": [
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "id",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column"
+        },
+        {
+          "column": {
+            "type": "column_ref",
+            "table": null,
+            "column": "user_id",
+            "collate": null
+          },
+          "definition": {
+            "dataType": "INT",
+            "suffix": []
+          },
+          "resource": "column"
+        },
+        {
+          "constraint": null,
+          "definition": [
+            {
+              "type": "column_ref",
+              "column": "id",
+              "order_by": null
+            }
+          ],
+          "constraint_type": "primary key",
+          "keyword": null,
+          "index_type": null,
+          "resource": "constraint",
+          "index_options": null
+        },
+        {
+          "constraint": null,
+          "definition": [
+            {
+              "type": "column_ref",
+              "table": null,
+              "column": "user_id",
+              "collate": null
+            }
+          ],
+          "constraint_type": "FOREIGN KEY",
+          "keyword": null,
+          "index": null,
+          "resource": "constraint",
+          "reference_definition": {
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": "id",
+                "collate": null
+              }
+            ],
+            "table": [
+              {
+                "db": null,
+                "table": "users",
+                "as": null
+              }
+            ],
+            "keyword": "references",
+            "match": null,
+            "on_action": []
+          }
+        }
+      ],
+      "table_options": null
+    }
+  },
+  {
+    "sql": "ALTER TABLE posts ADD CONSTRAINT fk_x FOREIGN KEY (user_id) REFERENCES users (id)",
+    "ast": {
+      "type": "alter",
+      "table": [
+        {
+          "db": null,
+          "table": "posts"
+        }
+      ],
+      "expr": [
+        {
+          "action": "add",
+          "create_definitions": {
+            "constraint": "fk_x",
+            "definition": [
+              {
+                "type": "column_ref",
+                "table": null,
+                "column": "user_id",
+                "collate": null
+              }
+            ],
+            "constraint_type": "FOREIGN KEY",
+            "keyword": "constraint",
+            "index": null,
+            "resource": "constraint",
+            "reference_definition": {
+              "definition": [
+                {
+                  "type": "column_ref",
+                  "table": null,
+                  "column": "id",
+                  "collate": null
+                }
+              ],
+              "table": [
+                {
+                  "db": null,
+                  "table": "users",
+                  "as": null
+                }
+              ],
+              "keyword": "references",
+              "match": null,
+              "on_action": []
+            }
+          },
+          "resource": "constraint",
+          "type": "alter"
+        }
+      ]
+    }
+  }
+]
