@@ -2,7 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { SchemaError } from "./errors.js";
 
-export const DEFAULT_MAX_BYTES = 2 * 1024 * 1024;
+export const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
 
 export interface InputArgs {
   sql?: string | undefined;
@@ -20,7 +20,7 @@ export interface InputOptions {
   maxBytes?: number;
 }
 
-/** Size cap from `SQL_VIZ_MAX_BYTES` (a positive integer of bytes), else 2 MB. */
+/** Size cap from `SQL_VIZ_MAX_BYTES` (a positive integer of bytes), else 10 MB. */
 export function maxInputBytes(env: NodeJS.ProcessEnv = process.env): number {
   const raw = env.SQL_VIZ_MAX_BYTES?.trim();
   if (!raw) return DEFAULT_MAX_BYTES;
@@ -83,7 +83,10 @@ export async function resolveInput(
     if (code === "EACCES" || code === "EPERM") {
       throw new SchemaError("INPUT", `Permission denied reading ${path}`);
     }
-    throw new SchemaError("INPUT", `Cannot read ${path}: ${(e as Error).message}`);
+    throw new SchemaError(
+      "INPUT",
+      `Cannot read ${path}: ${(e as Error).message}`,
+    );
   }
   if (info.isDirectory()) {
     throw new SchemaError("INPUT", `${path} is a directory, not a .sql file.`);
@@ -97,7 +100,10 @@ export async function resolveInput(
   try {
     bytes = await readFile(path);
   } catch (e) {
-    throw new SchemaError("INPUT", `Cannot read ${path}: ${(e as Error).message}`);
+    throw new SchemaError(
+      "INPUT",
+      `Cannot read ${path}: ${(e as Error).message}`,
+    );
   }
   let sql: string;
   try {
