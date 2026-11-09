@@ -11,6 +11,28 @@ const render = (sql: string) => {
   return renderHtml(schema, layoutSchema(schema), { dialect: "PostgreSQL", dialectSource: "given" });
 };
 
+/** The CSS custom properties of the light `:root` block or the `prefers-color-scheme: dark` one. */
+function themeVars(html: string, theme: "light" | "dark"): Record<string, string> {
+  const css = html.match(/<style>([\s\S]*?)<\/style>/)![1]!;
+  const dark = css.match(/@media \(prefers-color-scheme:dark\)\{:root\{([^}]*)\}\}/)![1]!;
+  const light = css.replace(/@media[^{]*\{:root\{[^}]*\}\}/g, "").match(/:root\{([^}]*)\}/)![1]!;
+  return Object.fromEntries([...(theme === "dark" ? dark : light).matchAll(/(--[\w-]+):([^;]+)/g)].map((m) => [m[1]!, m[2]!.trim()]));
+}
+
+/** WCAG 2 contrast ratio of two #rgb / #rrggbb colours. */
+function contrast(a: string, b: string): number {
+  const lum = (color: string) => {
+    const hex = color.length === 4 ? color.replace(/\w/g, "$&$&") : color;
+    const [r, g, bl] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r! + 0.7152 * g! + 0.0722 * bl!;
+  };
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (hi! + 0.05) / (lo! + 0.05);
+}
+
 const fixtureHtml = render(readFileSync(join(import.meta.dirname, "fixtures", "postgresql.sql"), "utf8"));
 
 describe("escape", () => {
@@ -30,6 +52,18 @@ describe("escape", () => {
 describe("renderHtml — PostgreSQL fixture", () => {
   it("matches the snapshot", async () => {
     await expect(fixtureHtml).toMatchFileSnapshot("./__snapshots__/postgresql.html");
+  });
+
+  it("draws table names bold, larger than rows and vertically centred in the header", () => {
+    expect(fixtureHtml).toMatch(/\.hn\{fill:var\(--hdr-fg\);font-size:13px;font-weight:700;dominant-baseline:middle\}/);
+    expect(fixtureHtml).toContain('<text class="hn" x="10" y="13">public.customers</text>');
+  });
+
+  it.each(["light", "dark"] as const)("header text contrasts with header fill in %s mode (≥ 4.5:1)", (theme) => {
+    const v = themeVars(fixtureHtml, theme);
+    expect(contrast(v["--hdr-fg"]!, v["--hdr-bg"]!)).toBeGreaterThanOrEqual(4.5); // tables
+    expect(contrast(v["--hdrv-fg"]!, v["--hdrv-bg"]!)).toBeGreaterThanOrEqual(4.5); // views
+    expect(contrast(v["--muted"]!, v["--card"]!)).toBeGreaterThanOrEqual(4.5); // placeholder names
   });
 
   it("is a standalone HTML page with one inline SVG", () => {

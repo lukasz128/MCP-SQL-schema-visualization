@@ -8,6 +8,7 @@ An MCP server that takes SQL DDL — either a path to a `.sql` file or a raw SQL
 - Modules: `index.ts` (SDK only) → `tool.ts` (`runVisualize`) → `input.ts` → `split.ts` → `parser.ts` → `layout.ts` → `render.ts`; `model.ts` types, `errors.ts` `SchemaError`.
 - Not yet: `dialect.ts` (Phase 5). An omitted `dialect` currently falls back to PostgreSQL ("Parsed as PostgreSQL (default)").
 - Scripts: `npm start`, `npm test` (vitest), `npm run typecheck`, `npm run spike:ast` (rewrites `test/ast-samples/`).
+- **M1 corrections (Phase 4):** readable table names done (themed header pair, contrast test). Drag and drop of tables still to do.
 - Known parser gaps (node-sql-parser 5.4, PostgreSQL): `GENERATED ... AS IDENTITY` columns and `REFERENCES t` without a column list make the whole statement fail → it becomes a warning. Candidates for Phase 6.
 
 ## Stack
@@ -51,6 +52,8 @@ Keep these as separate modules so each can be tested on its own. Tests: sample `
 - Ignore (don't fail on) unsupported statements: `INSERT`, comments, `CREATE INDEX`, etc.
 
 ## Rendering notes (server-side SVG)
+- **Header colours:** header fill and table-name text always come from one theme pair of CSS variables — `--hdr-bg`/`--hdr-fg` (tables), `--hdrv-bg`/`--hdrv-fg` (views) — defined in both the light block and the `prefers-color-scheme: dark` block. Never combine a fixed fill with a themed text colour. `test/render.test.ts` asserts ≥ 4.5:1 contrast for each pair in both themes.
+- **Table name:** bold, `HEADER_FONT_SIZE` (13px, ~1.1× rows), `dominant-baseline: middle` at the header's vertical centre. Long names (and a placeholder's `(not defined)` suffix) widen the node via the size estimate; never truncate.
 - **Table box:** `<g>` per table — header rect with table name, then one row per column: key marker (`PK`, `FK`, `UQ`), column name, type; nullable columns visually lighter. Monospace font so widths can be estimated without measuring text (≈ chars × font-size × 0.6).
 - **Relationships:** FK edges drawn as SVG `<path>` from the exact source column row to the exact referenced column row (row y = node top + header height + row index × row height), with an arrowhead `<marker>`. Use dagre's edge points for routing, then snap the endpoints to the column rows.
 - **Page:** `<!doctype html>`, inline `<style>`, title, optional summary (table/FK count), SVG sized to the dagre graph bounds with a `viewBox` so it scales. Light/dark via `prefers-color-scheme` in CSS.
