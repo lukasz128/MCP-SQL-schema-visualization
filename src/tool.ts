@@ -14,7 +14,7 @@ export const TOOL_NAME = "visualize-sql-schema";
 export const TOOL_DESCRIPTION =
   "Render SQL DDL (CREATE TABLE, ALTER TABLE ... ADD CONSTRAINT, CREATE VIEW) as an entity-relationship diagram. " +
   "Pass exactly one of `sql` (the DDL text) or `filePath` (a .sql file on this machine). " +
-  "Returns one self-contained HTML page (inline SVG and CSS, no scripts, no network) as text: save it as a .html file or show it to the user. " +
+  "Returns one self-contained HTML page (inline SVG and CSS plus one small inline script for dragging tables; no network, works offline) as text: save it as a .html file or show it to the user. " +
   "Statements that are not schema DDL (INSERT, CREATE INDEX, functions, ...) are skipped and listed in the page.";
 
 export const visualizeInputSchema = z.object({

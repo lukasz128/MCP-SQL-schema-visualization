@@ -1,8 +1,16 @@
-// Schema model + layout → one self-contained HTML page (inline CSS + inline SVG, no script).
+// Schema model + layout → one self-contained HTML page: inline CSS + inline SVG, plus one small
+// inline script (drag.ts) for moving tables. The SVG is complete without the script.
 // Header fill and header text always come from the same theme pair (--hdr-bg/--hdr-fg,
 // --hdrv-bg/--hdrv-fg for views), defined in both the light and the dark block; never
 // combine a fixed fill with a themed text colour.
+//
+// Safety: every string that comes from the SQL goes through escape() before it reaches the page;
+// everything else written unescaped is a number, a generated id (n3, e0) or a constant. The
+// Content-Security-Policy below is the backstop: only the drag script (allowed by its hash) may
+// run and nothing may be loaded, so an escaping mistake cannot turn into running code.
+import { createHash } from "node:crypto";
 import { FONT_SIZE, HEADER_FONT_SIZE, HEADER_HEIGHT, PLACEHOLDER_SUFFIX, ROW_HEIGHT, type Layout, type LayoutNode, type Point } from "./layout.js";
+import { dragScript } from "./drag.js";
 import type { Column, Dialect, Schema, Table } from "./model.js";
 
 export interface RenderMeta {
@@ -19,6 +27,21 @@ export function escape(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ESCAPES[c]!);
 }
 
+const SCRIPT = dragScript();
+
+/**
+ * The page's Content-Security-Policy: no network, no plugins, inline styles only, and exactly one
+ * script, the drag script, pinned by its SHA-256 hash (it is a constant, so the hash is too).
+ * `base-uri` and `form-action` don't fall back to `default-src`, so they are listed explicitly.
+ */
+export const CSP = [
+  "default-src 'none'",
+  "style-src 'unsafe-inline'",
+  `script-src 'sha256-${createHash("sha256").update(SCRIPT).digest("base64")}'`,
+  "base-uri 'none'",
+  "form-action 'none'",
+].join("; ");
+
 const n = (v: number): string => String(Math.round(v * 10) / 10);
 const BASELINE = FONT_SIZE * 0.35; // vertical offset from a row's center to the text baseline
 const CORNER = 4;
@@ -26,12 +49,14 @@ const CORNER = 4;
 const CSS = `:root{color-scheme:light dark;--bg:#fff;--fg:#1f2328;--muted:#656d76;--line:#c9d1d9;--hdr-bg:#e8eef6;--hdr-fg:#1f2328;--hdrv-bg:#efe9f8;--hdrv-fg:#1f2328;--edge:#6e7781;--key:#9a6700;--card:#fff}
 @media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8b949e;--line:#3d444d;--hdr-bg:#1c2633;--hdr-fg:#e6edf3;--hdrv-bg:#2a2238;--hdrv-fg:#e6edf3;--edge:#8b949e;--key:#d29922;--card:#151b23}}
 *{box-sizing:border-box}body{margin:0;padding:16px;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-h1{font-size:18px;margin:0 0 2px}header p,footer{margin:0;color:var(--muted);font-size:13px}main{margin:12px 0;overflow:auto}
+header{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:start;justify-content:space-between}h1{font-size:18px;margin:0 0 2px}
+button{font:13px system-ui,sans-serif;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 10px;cursor:pointer}button[hidden]{display:none}header p,footer{margin:0;color:var(--muted);font-size:13px}main{margin:12px 0;overflow:auto}
 svg{display:block;max-width:100%;height:auto}svg text{font:${FONT_SIZE}px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:var(--fg)}
 .c{fill:var(--card);stroke:none}.o{fill:none;stroke:var(--line)}.h{fill:var(--hdr-bg)}.v .h{fill:var(--hdrv-bg)}.hn{fill:var(--hdr-fg);font-size:${HEADER_FONT_SIZE}px;font-weight:700;dominant-baseline:middle}.v .hn{fill:var(--hdrv-fg)}
 .k{fill:var(--key);font-size:10px;font-weight:600}.ty{fill:var(--muted)}.nl{opacity:.62}.pk{font-weight:600}
 .p .o{stroke-dasharray:4 3}.p .hn{font-style:italic;font-weight:400;fill:var(--muted)}
 .e{fill:none;stroke:var(--edge);stroke-width:1.25}.ev{stroke-dasharray:2 3;opacity:.8}.m{fill:var(--edge)}
+.dr .h,.dr .hn,.dr .p{cursor:grab;touch-action:none}svg.dg{overflow:visible}.dg,.dg *{cursor:grabbing!important;user-select:none}
 details{margin-top:8px;font-size:13px}summary{cursor:pointer;color:var(--muted)}details ul{margin:6px 0;padding-left:20px}code{font:12px ui-monospace,Menlo,Consolas,monospace}`;
 
 /** Path through the routed points; axis-aligned routes (loops, brackets) get rounded corners. */
@@ -89,7 +114,7 @@ function renderNode(node: LayoutNode, table: Table | undefined): string {
     : `<path class="h" d="M0,${HEADER_HEIGHT}V${CORNER}Q0,0 ${CORNER},0H${n(node.width - CORNER)}Q${w},0 ${w},${CORNER}V${HEADER_HEIGHT}Z"/>`;
   const label = node.placeholder ? `${node.label}${PLACEHOLDER_SUFFIX}` : node.label;
   let out =
-    `<g class="${cls}" transform="translate(${n(node.x)},${n(node.y)})">` +
+    `<g class="${cls}" data-t="${node.id}" transform="translate(${n(node.x)},${n(node.y)})">` +
     `<title>${escape(node.placeholder ? `${node.label}: referenced but not defined in this DDL` : `${node.kind === "view" ? "view" : "table"} ${node.label}`)}</title>` +
     `<rect class="c" width="${w}" height="${n(node.height)}" rx="${CORNER}"/>${headerPath}` +
     `<text class="hn" x="${n(node.markerX)}" y="${n(HEADER_HEIGHT / 2)}">${escape(label)}</text>`;
@@ -126,7 +151,10 @@ export function renderHtml(schema: Schema, layout: Layout, meta: RenderMeta): st
   const heading = meta.title ? meta.title : "Database schema";
 
   const edges = layout.edges
-    .map((e) => `<path class="e${e.kind === "view" ? " ev" : ""}" d="${pathData(e.points)}" marker-end="url(#a)"/>`)
+    .map(
+      (e) =>
+        `<path class="e${e.kind === "view" ? " ev" : ""}" data-from="${e.from}" data-fr="${e.fromRow}" data-to="${e.to}" data-tr="${e.toRow}" d="${pathData(e.points)}" marker-end="url(#a)"/>`,
+    )
     .join("");
   const nodes = layout.nodes
     .map((nd) => renderNode(nd, nd.tableIndex === undefined ? undefined : schema.tables[nd.tableIndex]))
@@ -142,13 +170,17 @@ export function renderHtml(schema: Schema, layout: Layout, meta: RenderMeta): st
   const H = n(layout.height);
   return (
     `<!doctype html><html lang="en"><head><meta charset="utf-8">` +
+    // First thing after the charset, so it covers everything that follows.
+    `<meta http-equiv="Content-Security-Policy" content="${CSP}">` +
     `<meta name="viewport" content="width=device-width,initial-scale=1">` +
     `<title>${escape(heading)}</title><style>${CSS}</style></head><body>` +
-    `<header><h1>${escape(heading)}</h1><p>${summary.join(" · ")} · Parsed as ${escape(meta.dialect)} (${source})</p></header>` +
+    `<header><div><h1>${escape(heading)}</h1><p>${summary.join(" · ")} · Parsed as ${escape(meta.dialect)} (${source})</p></div>` +
+    // Hidden until the script runs: without JS there is nothing to reset.
+    `<button id="reset" type="button" hidden>Reset layout</button></header>` +
     `<main><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${escape(`Schema diagram: ${summary.join(", ")}`)}">` +
     `<defs><marker id="a" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="m" d="M0,0L8,4L0,8z"/></marker></defs>` +
     `${edges}${nodes}</svg></main>` +
     `<footer>PK primary key · FK foreign key · UQ unique · faded rows are nullable${views ? " · dotted lines link views to their tables" : ""}${missing ? " · dashed boxes are referenced but not defined" : ""}</footer>` +
-    `${warnings}</body></html>\n`
+    `${warnings}<script>${SCRIPT}</script></body></html>\n`
   );
 }
