@@ -14,9 +14,9 @@ export const PAD_X = 10;
 const GAP = CHAR_WIDTH * 2; // between marker, name and type
 const NODE_SEP = 40;
 const RANK_SEP = 90;
-const MARGIN = 20;
+export const MARGIN = 20;
 const STUB = 14; // horizontal run before an edge bends away from a row
-const LOOP_OFFSET = 26;
+export const LOOP_OFFSET = 26;
 const LOOP_STEP = 10;
 /** LR graphs wider than this × their height are re-laid out top-to-bottom. Provisional: tune on the 30-table fixture (Phase 7). */
 export const TB_ASPECT_THRESHOLD = 4;
